@@ -1,80 +1,97 @@
-# ?? Pinterest Marketing Automation & AI Visual Engine
-### ?? ¸³ÄÜ [www.chinesename.us](https://www.chinesename.us) µÄ AI ×Ô¶¯»¯ÄÚÈÝÉú²úÁ÷Ë®Ïß
+ðŸ“œ AI-Powered Pinterest Marketing Automation (n8n Workflow)
+ðŸš€ Elevating www.chinesename.us with Automated Aesthetic Content
+This project provides a production-ready n8n workflow designed to automate the creation and distribution of high-quality Pinterest content. It solves the "content fatigue" problem in social media marketing by using AI to generate culturally deep content and Puppeteer to render unique, non-duplicative visuals at scale.
 
-±¾ÏîÄ¿ÓÉ **Hellos AI** ¿ª·¢£¬ÊÇÒ»¸ö¸ß¶È×Ô¶¯»¯µÄÄÚÈÝÓªÏúÒýÇæ¡£Ëü½â¾öÁË Pinterest ÓªÏúÖÐ¡°ÅúÁ¿ÖÆÍ¼ÄÑ¡±¡¢¡°SEO ÎÄ°¸ºÄÊ±¡±ÒÔ¼°¡°ÄÚÈÝÖØ¸´ÂÊ¸ß¡±µÄÍ´µã¡£Í¨¹ý¼¯³É **·ÉÊé¶àÎ¬±í¸ñ**¡¢**DeepSeek ´óÄ£ÐÍ**¡¢ÒÔ¼° **Puppeteer ¶¯Ì¬äÖÈ¾¼¼Êõ**£¬ÊµÏÖ´ÓÊý¾ÝÊäÈëµ½Í¼Æ¬Éú³É¡¢ÔÆ¶Ë´æ´¢¡¢×îºóÊý¾Ý»ØÁ÷µÄÍêÕûÎÞÈËÖµÊØ±Õ»·¡£
+ðŸŒŸ Project Vision
+Targeting the 2026 Year of the Horse naming market, this workflow transforms raw naming data into "Instagram-worthy" Pinterest pins. It ensures every post is SEO-optimized and visually distinct, driving organic traffic to the naming platform.
 
----
+ðŸš€ Key Features & Workflow Steps
+Data Ingestion: Monitors a Feishu (Lark) Bitable for new naming requests or trending keywords.
 
-## ?? ÏîÄ¿±³¾°ÓëÄ¿µÄ (Project Purpose)
+AI Intelligence (DeepSeek V3): Uses AI to curate 20 meaningful Chinese names per batch, including SEO titles, descriptions, and Alt-text.
 
-ÎªÁËÌáÉý **chinesename.us** ÔÚ Pinterest ÉÏµÄÁ÷Á¿×ª»¯£¬¸Ã¹¤×÷Á÷Õë¶Ô **2026 ÂíÄê (Year of the Horse)** ½øÐÐÁËÉî¶ÈÓÅ»¯¡£Ëü½«·±ËöµÄÈ¡ÃûÊý¾Ý×ª»¯Îª¼«¾ßÃÀ¸ÐµÄÊÓ¾õÃûÆ¬£¬ÀûÓÃ AI È·±£Ã¿Ò»Ìõ Pin ¶¼¾ß±¸¼«¸ßµÄÎÄ»¯µ×ÔÌºÍËÑË÷È¨ÖØ£¬ÖúÁ¦Æ·ÅÆÔÚÈ«ÇòÊÐ³¡³öº£¡£
+Dynamic Visual Factory:
 
----
+Matches assets from an n8n Data Table.
 
-## ?? ¹¤×÷Á÷ºËÐÄ¼Ü¹¹ (Workflow Overview)
+Injects data into a custom HTML/CSS template.
 
-¸ù¾Ý `pinterest_automation_publish.json` µÄÂß¼­ÅäÖÃ£¬ÏµÍ³·ÖÎªÒÔÏÂËÄ¸öºËÐÄ½×¶Î£º
+Anti-Detection Algorithm: Uses JavaScript to inject random noise, micro-pixel shifts, and scaling to ensure every image has a Unique File Hash, preventing platform shadowbans for "duplicate content."
 
-### 1. Êý¾Ý´¥·¢Óë»ñÈ¡ (Data Sourcing)
-* **¶àÔ´´¥·¢**£ºÖ§³Ö `Manual Trigger` ÊÖ¶¯Ö´ÐÐ»ò `Schedule Trigger` ¶¨Ê±´¥·¢£¨Ô¤ÉèÃ¿Ìì 08:10 ×Ô¶¯Ö´ÐÐ£©¡£
-* **·ÉÊé¼¯³É**£º×Ô¶¯Á¬½Óµ½ **·ÉÊé¶àÎ¬±í¸ñ (Feishu Bitable)**£¬Í¨¹ý `Bitable:parseUrl` ½Úµã¼ìË÷×´Ì¬Îª¡°³õÊ¼¡±µÄÈÎÎñ¼ÇÂ¼£¬ÊµÏÖÈÎÎñµÄ¾«×¼×¥È¡¡£
+Screenshot Engine: Uses Puppeteer to capture 1000x1500px (2:3) high-res vertical pins.
 
-### 2. AI ÖÇÄÜÄÚÈÝ´óÄÔ (AI Content Engine)
-* **ºËÐÄÄ£ÐÍ**£º¼¯³É **DeepSeek Chat V3** (Í¨¹ý n8n LangChain ¼Ü¹¹)¡£
-* **Ê×Ï¯ÄÚÈÝ¹ÙÄ£Ê½**£ºAI ¸ù¾ÝÊäÈëµÄÐÔ±ð¡¢·ç¸ñ±êÇ©Éú³É 20 ×é¸»ÓÐÔÏÎ¶µÄÖÐÎÄÐÕÃû£¬²¢×Ô¶¯Êä³ö·ûºÏ Pinterest Ëã·¨µÄ±êÌâ¡¢ÃèÊöºÍ Alt ÎÄ±¾¡£
-* **HTML ¸ñÊ½»¯**£ºAI Ö±½Ó²ÎÓë HTML ½á¹¹µÄÔ¤´¦Àí£¬È·±£ÊÓ¾õÕ¹Ê¾ÓëÎÄ»¯ÄÚº­Éî¶ÈÍ³Ò»¡£
+Cloud Distribution: Uploads to Cloudflare R2 and archives batch data to Google Drive (CSV).
 
-### 3. ¶¯Ì¬ÊÓ¾õ¹¤³§ (Visual Factory)
-* **×ÊÔ´¾«×¼Æ¥Åä**£º²éÑ¯ **n8n Data Table**£¬¸ù¾ÝÀà±ð×Ô¶¯µ÷È¡¶ÔÓ¦µÄ±³¾°µ×Í¼Â·¾¶ºÍ×ÖÌå·ç¸ñ£¨Õë¶Ô 2026 ÂíÄê¶¨ÖÆ£©¡£
-* **¸ß±£ÕæäÖÈ¾**£ºÀûÓÃ HTML5 + CSS3 Ä£°å×¢ÈëÊý¾Ý£¬Í¨¹ý **Puppeteer** Ä£Äâä¯ÀÀÆ÷½ØÈ¡ 2:3 ±ÈÀý (1000x1500px) µÄ¸ß·Ö±æÂÊÍ¼Æ¬¡£
-* **·À½µÈ¨¼¼Êõ (Anti-Detection)**£ºÄÚÖÃ JavaScript ¸ÉÈÅ½Å±¾£¬Éú³ÉËæ»ú¼¸ºÎÔëµã¡¢Î¢µ÷ÏñËØÎ»ÖÃºÍ±³¾°Ëõ·Å£¬È·±£Ã¿ÕÅÍ¼Æ¬µÄ **File Hash Î¨Ò»**£¬¹æ±ÜÆ½Ì¨²éÖØ»úÖÆ¡£
+Loopback: Updates the original Feishu record with the live Image URL and "Published" status.
 
-### 4. ÔÆ¶Ë·Ö·¢ÓëÊý¾Ý±Õ»· (Cloud & Integration)
-* **¶ÔÏó´æ´¢**£ºÉú³ÉµÄÍ¼Æ¬×Ô¶¯ÉÏ´«ÖÁ **Cloudflare R2**£¨S3 ¼æÈÝÄ£Ê½£©»ñÈ¡ÍâÁ´¡£
-* **×´Ì¬»ØÐ´**£º½«Éú³ÉµÄÍ¼Æ¬ URL¡¢SEO ÎÄ°¸ÊµÊ±Ð´»Ø·ÉÊé£¬²¢½«ÈÎÎñ±ê¼ÇÎª¡°ÒÑ·¢²¼¡±¡£
-* **Êý¾Ý¹éµµ**£º½«Åú´ÎÊý¾Ý»ã×ÜÎª CSV ²¢ÉÏ´«ÖÁ **Google Drive**£¬·½±ã½øÐÐ³¤ÖÜÆÚµÄÓªÏúÐ§¹û·ÖÎö¡£
+ðŸ› ï¸ Tech Stack
+Automation: n8n (with Puppeteer & LangChain)
 
----
+AI Model: DeepSeek-V3
 
-## ??? ¼¼ÊõÕ» (Tech Stack)
+Database: Feishu Bitable & n8n Data Table
 
-* **×Ô¶¯»¯Æ½Ì¨**: n8n
-* **ÓªÏúÄ¿±ê**: [chinesename.us](https://www.chinesename.us)
-* **Êý¾Ý¹ÜÀí**: Feishu Bitable (·ÉÊé), n8n Data Table
-* **ÈË¹¤ÖÇÄÜ**: DeepSeek-V3 (via LangChain)
-* **äÖÈ¾¼¼Êõ**: HTML5, CSS3, Puppeteer (Headless Chrome)
-* **ÔÆ´æ´¢**: Cloudflare R2, Google Drive
-* **¼à¿ØÏµÍ³**: SMTP Email (Sina Mail) ÊµÊ±´íÎó¸æ¾¯
+Storage: Cloudflare R2 & Google Drive
 
----
+Monitoring: SMTP (Sina Mail) Alerts
 
-## ?? ¿ìËÙ²¿ÊðËµÃ÷ (Setup Guide)
+ðŸ”— Connect & Support
+Official Website: chinesename.us
 
-1. **µ¼Èë¹¤×÷Á÷**£º½« `pinterest_automation_publish.json` µ¼ÈëÄãµÄ n8n »·¾³¡£
-2. **»·¾³ÒÀÀµ**£ºÈ·±£ n8n ËùÔÚµÄ Docker ÈÝÆ÷°²×°ÁË `Puppeteer` ÒÀÀµ¿â¼°ÖÐÎÄÏµÁÐ×ÖÌå£¨ÍÆ¼ö `fonts-noto-cjk`£©¡£
-3. **Æ¾¾ÝÅäÖÃ**£ºÔÚ n8n ºóÌ¨ÅäÖÃÒÔÏÂ API Æ¾¾Ý£º
-   * Feishu API (¶àÎ¬±í¸ñÈ¨ÏÞ)
-   * DeepSeek API (ÄÚÈÝÉú³É)
-   * AWS S3 API (ÓÃÓÚ Cloudflare R2 ´æ´¢)
-   * Google Drive OAuth2
-   * SMTP (ÓÃÓÚ¸æ¾¯)
+Technical Wiki (Feishu): Detailed Setup Guide
 
----
+Personal Blog: hellosai.cc
 
-## ?? ºËÐÄ¼ÛÖµ
+YouTube: @hellos-ai
 
-> **¡°ÅúÁ¿Éú²ú²»´ú±íÁ÷Ë®Ïß»¯£¬AI ¿ÉÒÔÊµÏÖ¸ß¼¶¶¨ÖÆ¡£¡±**
-> 
-> ±¾ÏîÄ¿Í¨¹ý¡°´úÂë¼¶Ëæ»ú¸ÉÈÅ¡±¼¼ÊõºÍ¡°AI ×¨¼Ò¼¶È¡ÃûÂß¼­¡±£¬ÈÃÃ¿Ò»ÕÅ Pin Í¼ÔÚ±£³ÖÊÓ¾õ¸ß¼¶¸Ð£¨Instagram-worthy£©µÄÍ¬Ê±£¬¼æ¹ËÁËÎÄ»¯×¼È·ÐÔºÍ SEO È¨ÖØ£¬ÊÇÉç½»Ã½Ìå×Ô¶¯»¯ÓªÏúµÄÊµÕ½¼¶ÀûÆ÷¡£
+GitHub: My n8n Sharing
 
----
+ðŸ“œ Pinterest è¥é”€è‡ªåŠ¨åŒ– & AI è§†è§‰å¼•æ“Ž (n8n å·¥ä½œæµ)
+ðŸš€ èµ‹èƒ½ www.chinesename.us çš„å†…å®¹å¢žé•¿å¼•æ“Ž
+æœ¬é¡¹ç›®åˆ†äº«äº†ä¸€å¥—å®žæˆ˜çº§åˆ«çš„ n8n å·¥ä½œæµï¼Œæ—¨åœ¨è‡ªåŠ¨åŒ–ç”Ÿäº§é«˜è´¨é‡çš„ Pinterest å†…å®¹ã€‚å®ƒé€šè¿‡ AI ç”Ÿæˆæ·±åº¦çš„æ–‡åŒ–å†…å®¹ï¼Œå¹¶åˆ©ç”¨ Puppeteer åŠ¨æ€æ¸²æŸ“æŠ€æœ¯è§£å†³äº†ç¤¾äº¤åª’ä½“è¥é”€ä¸­â€œå›¾ç‰‡é‡å¤â€å’Œâ€œåˆ¶å›¾éš¾â€çš„ç—›ç‚¹ã€‚
 
-## ?? ¹ØÓÚ×÷ÕßÓëÖ§³Ö (Contact & Support)
+ðŸŒŸ é¡¹ç›®æ„¿æ™¯
+é’ˆå¯¹ 2026 é©¬å¹´ å–åå¸‚åœºï¼Œè¯¥å·¥ä½œæµå°†ç¹ççš„æ•°æ®è½¬åŒ–ä¸ºæžå…·ç¾Žæ„Ÿçš„è§†è§‰åç‰‡ã€‚ç¡®ä¿æ¯ä¸€æ¡ Pin å›¾éƒ½ç»è¿‡ SEO ä¼˜åŒ–ä¸”è§†è§‰ç‹¬ä¸€æ— äºŒï¼Œä»Žè€Œä¸ºå–åå¹³å°å¸¦æ¥æŒç»­çš„è‡ªç„¶æµé‡ã€‚
 
-Èç¹ûÄã¶Ô±¾ÏîÄ¿¸ÐÐËÈ¤£¬»òÕßÏëÁË½â¸ü¶à¹ØÓÚ AI ×Ô¶¯»¯ÓªÏúµÄÄÚÈÝ£¬»¶Ó­Í¨¹ýÒÔÏÂÆµµÀÁªÏµÎÒ£º
+ðŸš€ æ ¸å¿ƒåŠŸèƒ½ä¸Žæ­¥éª¤
+æ•°æ®é‡‡é›†ï¼šå®žæ—¶ç›‘æŽ§ é£žä¹¦å¤šç»´è¡¨æ ¼ (Bitable) ä¸­çš„å–åä»»åŠ¡ã€‚
 
-* **¸öÈË²©¿Í (Blog)**: [https://hellosai.cc/](https://hellosai.cc/)
-* **YouTube ÆµµÀ**: [@hellos-ai](https://www.youtube.com/@hellos-ai)
-* **GitHub**: [Hello AI ×ÊÔ´·ÖÏí](https://github.com/tansunyj/my-n8n-sharing.git)
+AI æ™ºèƒ½åˆ›ä½œ (DeepSeek V3)ï¼šAI æ‰¹é‡ç”Ÿæˆ 20 ç»„å¯Œæœ‰éŸµå‘³çš„ä¸­æ–‡å§“åï¼Œå¹¶è¾“å‡ºç¬¦åˆ Pinterest ç®—æ³•çš„æ ‡é¢˜ã€æè¿°å’Œ Alt æ–‡æœ¬ã€‚
 
-_?? Powered by **Hellos AI** Automation Flows_
+åŠ¨æ€è§†è§‰å·¥åŽ‚ï¼š
+
+é€šè¿‡ n8n Data Table åŒ¹é…å¯¹åº”ç±»åˆ«çš„èƒŒæ™¯åº•å›¾ã€‚
+
+å°†æ•°æ®æ³¨å…¥è‡ªå®šä¹‰ HTML/CSS æ¨¡æ¿ã€‚
+
+é˜²é™æƒç®—æ³•ï¼šå†…ç½® JS å¹²æ‰°è„šæœ¬ï¼Œç”Ÿæˆéšæœºå™ªç‚¹ã€å¾®è°ƒåƒç´ ä½ç½®ï¼Œç¡®ä¿ç”Ÿæˆçš„æ¯å¼ å›¾ç‰‡ æ–‡ä»¶å“ˆå¸Œå€¼å”¯ä¸€ï¼Œè§„é¿å¹³å°æŸ¥é‡é™æƒã€‚
+
+è‡ªåŠ¨åŒ–æˆªå›¾ï¼šé©±åŠ¨ Puppeteer æˆªå– 1000x1500px (2:3æ¯”ä¾‹) çš„æ ‡å‡† Pin å›¾ã€‚
+
+äº‘ç«¯å­˜å‚¨ï¼šå›¾ç‰‡ä¸Šä¼ è‡³ Cloudflare R2ï¼Œæ‰¹æ¬¡æ•°æ®ä»¥ CSV æ ¼å¼å¤‡ä»½è‡³ Google Driveã€‚
+
+çŠ¶æ€å›žæµï¼šè‡ªåŠ¨æ›´æ–°é£žä¹¦è®°å½•ï¼Œå¡«å…¥ç”ŸæˆåŽçš„å›¾ç‰‡é“¾æŽ¥å¹¶å°†çŠ¶æ€æ ‡è®°ä¸ºâ€œå·²å‘å¸ƒâ€ã€‚
+
+ðŸ› ï¸ æŠ€æœ¯æ ˆ
+è‡ªåŠ¨åŒ–å¼•æ“Ž: n8n (é›†æˆ Puppeteer ä¸Ž LangChain)
+
+äººå·¥æ™ºèƒ½: DeepSeek-V3 å¤§æ¨¡åž‹
+
+æ•°æ®ç®¡ç†: é£žä¹¦å¤šç»´è¡¨æ ¼ & n8n Data Table
+
+å­˜å‚¨æ–¹æ¡ˆ: Cloudflare R2 & Google Drive
+
+é”™è¯¯é¢„è­¦: SMTP (æ–°æµªé‚®ç®±) å®žæ—¶å‘Šè­¦
+
+ðŸ”— è”ç³»æ–¹å¼ä¸Žæ–‡æ¡£
+é¡¹ç›®å®˜ç½‘: chinesename.us
+
+é£žä¹¦çŸ¥è¯†åº“ (è¯¦ç»†é…ç½®è¯´æ˜Ž): ç‚¹æ­¤æŸ¥çœ‹
+
+ä¸ªäººåšå®¢: hellosai.cc
+
+YouTube é¢‘é“: @hellos-ai
+
+GitHub ä»“åº“: Hello AI èµ„æºåˆ†äº«
+
+ðŸš€ Powered by Hellos AI Automation Flows
