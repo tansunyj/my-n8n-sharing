@@ -1,0 +1,952 @@
+{
+  "name": "pinterest_automation_publish",
+  "nodes": [
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.manualTrigger",
+      "typeVersion": 1,
+      "position": [
+        -448,
+        1136
+      ],
+      "id": "f4b35be5-c8a1-44de-b963-ad40201e9548",
+      "name": "When clicking ‘Execute workflow’"
+    },
+    {
+      "parameters": {
+        "resource": "bitable",
+        "operation": "bitable:parseUrl",
+        "url": "https://oahvw93j6te.feishu.cn/base/GMydbGiR8aMgQlsnC8qcMx29nae?table=tbl7zxbXS7bOTHy3&view=vew5crMgMI"
+      },
+      "type": "n8n-nodes-feishu-lite.feishuNode",
+      "typeVersion": 1,
+      "position": [
+        272,
+        1136
+      ],
+      "id": "009971b0-e634-446a-97d1-6ee27afb0e51",
+      "name": "Bitable:parseUrl bitable",
+      "credentials": {
+        "feishuCredentialsApi": {
+          "id": "xuG0xGw9LUJ1LWpI",
+          "name": "Feishu Credentials account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "resource": "bitable",
+        "operation": "bitable:table:record:search",
+        "app_toke": "={{ $json.app_token }}",
+        "table_id": "={{ $json.table_id }}",
+        "page_size": "={{ $('Edit Fields2').item.json.count }}",
+        "body": "{\"filter\":{\n  \"conjunction\":\"and\",\n  \"conditions\":[\n    {\n      \"field_name\":\"状态\",\n      \"operator\":\"is\",\n      \"value\":[\"初始\"]\n    }\n  ]\n}\n}"
+      },
+      "type": "n8n-nodes-feishu-lite.feishuNode",
+      "typeVersion": 1,
+      "position": [
+        464,
+        1136
+      ],
+      "id": "e908f874-0e9b-4edd-94c5-5d2fb164649d",
+      "name": "Bitable:table:record:search bitable",
+      "credentials": {
+        "feishuCredentialsApi": {
+          "id": "xuG0xGw9LUJ1LWpI",
+          "name": "Feishu Credentials account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "fieldToSplitOut": "data.items",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.splitOut",
+      "typeVersion": 1,
+      "position": [
+        672,
+        1136
+      ],
+      "id": "cd1e8d95-7a5c-4c54-b9b8-96f4807f3c4f",
+      "name": "Split Out"
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "n8n-nodes-base.splitInBatches",
+      "typeVersion": 3,
+      "position": [
+        912,
+        1136
+      ],
+      "id": "aaa8d82d-c8c1-4e8d-9fad-d1cd9a11863b",
+      "name": "Loop Over Items"
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "=用户信息如下：(输入的pin数据可能是3条也可能是2条或1条)\n\n{{$input.all().toJsonString()}}\n\n注释如下：\nBackground_Type：背景图类型；\nboard：指pinterest的board名称；\nImage_Big_Title：指pinterest中pin的图片的大标题；\nImage_Sub_Title：指pinterest中pin的图片的副标题；\nkeyword：指pinterest中pin的搜索关键词；\nTarget_URL：指我的取名网站chinesename.us的某个功能页面或博客页面地址；\nText_Style_Class：指后续模板使用到的字体颜色风格；",
+        "options": {
+          "systemMessage": "# Role\nYou are the **Chief Content Strategist & Chinese Cultural Expert** for the website `chinesename.us`. Your specialized goal is to generate high-converting, SEO-optimized content for Pinterest Pins to drive traffic to the website. You possess deep knowledge of traditional Chinese culture, naming conventions, taboos (bad meanings, homophones), and Pinterest SEO strategies.\n\n# Task\nYou will receive a JSON input containing metadata (Category, Board, Keyword, etc.). Based on this input, you must generate:\n1.  **Pin Title:** SEO-optimized, < 40 chars.\n2.  **Pin Description:** Engaging, < 400 chars, includes keywords and tags.\n3.  **Alt Text:** SEO-optimized or URL path based.\n4.  **Content Content (The Names):** A list of 20 culturally accurate, auspicious Chinese names formatted specifically for HTML rendering.\n\n# Input Analysis\nAnalyze the input JSON deeply before generating:\n*   **`Category`**: Determines the gender (MASCULINE = Boy, FEMININE = Girl/Women).\n*   **`Board` / `Keyword`**: Determines the *vibe/theme* of the names (e.g., \"Fantasy\", \"Dragon\", \"Flower\", \"Tattoo\", \"Dark\").\n*   **`Target_URL`**: Use this to understand the landing page context.\n\n# Constraints & Guidelines\n\n### 1. Pin Title\n*   **Length:** Strictly under 40 characters.\n*   **Content:** Must include 1-2 primary SEO keywords.\n*   **Style:** Catchy, click-worthy.\n\n### 2. Pin Description\n*   **Length:** Strictly under 400 characters.\n*   **Structure:**\n    1.  **Hook:** A question or statement solving the user's problem (e.g., \"Need a cool Chinese name?\").\n    2.  **Value:** Mention meanings, authenticity, or free generation.\n    3.  **Keywords:** Weave in 3-5 relevant keywords naturally.\n    4.  **Tags:** Append 3-5 relevant hashtags from the provided list.\n\n### 3. Alt Text\n*   Use the `path` part of the `Target_URL` (e.g., \"chinese-names-and-meanings\") OR a strong long-tail keyword phrase describing the image content.\n\n### 4. Name Generation (Crucial)\n*   **Quantity:** Generate exactly 20 names.\n*   **Relevance:** Names MUST fit the `Category` (Gender) and `Board`/`Keyword` (Theme).\n    *   *Example:* If Board is \"Fantasy/Boy\", use characters like 龙 (Dragon), 墨 (Ink), 渊 (Abyss), 剑 (Sword).\n    *   *Example:* If Board is \"Flower/Girl\", use 莲 (Lotus), 兰 (Orchid), 悦 (Joy).\n*   **Cultural Safety:**\n    *   **NO** negative meanings (Death, Stupid, Ugly, Evil - unless specifically requested for \"Dark/Villain\" context, but even then, keep it poetic).\n    *   **NO** bad homophones (e.g., avoid \"Si\" if it sounds like death).\n    *   **NO** overly common/cliché names (like \"Li Ming\") unless requested. Aim for \"Aesthetic\", \"Unique\", and \"Poetic\".\n*   **Format:** You must output two lists (`NAME_LEFT_LIST` and `NAME_RIGHT_LIST`), each with 10 items.\n    *   HTML Format: `<div class=\"name-item\">Pinyin <span>Hanzi</span></div>`\n    *   Example: `<div class=\"name-item\">Qinglian <span>青莲</span></div>`\n\n### 5. SEO Keyword Database (Reference Only)\nSelect the most relevant keywords based on the input JSON. Do NOT use all of them.\n\n*   **General/High Traffic:** chinese names and meanings, chinese names with meaning, chinese names aesthetic, chinese names ideas, chinese names list, chinese names for oc.\n*   **Boy/Male:** chinese names boy, chinese names male, chinese names for boys, chinese names boy meaning, chinese names boy dragon, chinese names boy cold, chinese names boy dark, male chinese names with meanings, aesthetic chinese guy names.\n*   **Girl/Female:** chinese names girl, chinese names girl meaning, chinese names girl aesthetic, chinese names girl flower, chinese names girl moon, cute chinese girl names with meaning.\n*   **Specific/Niche:** tattoo ideas names chinese, danmei chinese romantic novel names list, chinese names and meanings tattoo, rare chinese names.\n\n### 6. Tags Database (Reference Only)\nSelect 3-5 relevant tags to append to the description.\n*   #China #ChineseNames #NameIdeas #CharacterDesign #TattooIdeas #Mandarin #AsianNames #UniqueNames #Aesthetic #Hanzi\n\n# Output Format\nReturn the result strictly in the following JSON structure:\n\n```json\n[{\n  \"pin_title\": \"Your Generated Title Here\",\n  \"pin_description\": \"Your description here... #tags\",\n  \"alt_text\": \"your-alt-text\",\n  \"name_data\": {\n    \"NAME_LEFT_LIST\": [\n      \"<div class=\\\"name-item\\\">Perl<span>珍珠</span></div>\",\n       ... (9 more)\n    ],\n    \"NAME_RIGHT_LIST\": [\n      \"<div class=\\\"name-item\\\">Moon<span>月亮</span></div>\",\n      ... (9 more)\n    ]\n  },\n  \"rationale\": \"Brief explanation of why these names/keywords were chosen based on the input.\"\n}]\n"
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 3.1,
+      "position": [
+        1216,
+        1344
+      ],
+      "id": "e249dd4d-fef9-4851-adb0-f65ffa3fbc8a",
+      "name": "AI Agent"
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatDeepSeek",
+      "typeVersion": 1,
+      "position": [
+        1216,
+        1568
+      ],
+      "id": "cfa092f9-1fe1-4d15-8e01-4e492b26683d",
+      "name": "DeepSeek Chat Model",
+      "credentials": {
+        "deepSeekApi": {
+          "id": "TEcnqlOmPaezqlOF",
+          "name": "DeepSeek account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "sessionIdType": "customKey",
+        "sessionKey": "={{ $('Bitable:table:record:search bitable').item.json.data.items[0].fields.ID[0].text }}"
+      },
+      "type": "@n8n/n8n-nodes-langchain.memoryBufferWindow",
+      "typeVersion": 1.3,
+      "position": [
+        1344,
+        1568
+      ],
+      "id": "2488ffa3-7309-4997-a7b5-c95d9dd92016",
+      "name": "Simple Memory"
+    },
+    {
+      "parameters": {
+        "jsCode": "// 遍历所有输入的数据项\nconst results = [];\n\nfor (const item of items) {\n  try {\n    // 1. 获取 output 里的原始字符串\n    let rawContent = item.json.output;\n\n    // 2. 清理 Markdown 标记 (```json 和 ```)\n    let cleanContent = rawContent.replace(/^```json\\s*/, \"\").replace(/\\s*```$/, \"\");\n\n    // 3. 解析字符串为 JSON 对象\n    let parsedData = JSON.parse(cleanContent);\n\n    // 辅助函数：如果字段是数组，就用 join('') 合并；如果是字符串则不动\n    const joinListIfNeeded = (field) => {\n      if (Array.isArray(field)) {\n        return field.join(''); // 👈 关键：用空字符串连接，消灭逗号！\n      }\n      return field;\n    };\n\n    // 4. 处理解析后的数据\n    const processData = (data) => {\n      // 检查 name_data 是否存在，防止报错\n      if (data.name_data) {\n        // 修正 NAME_LEFT_LIST\n        if (data.name_data.NAME_LEFT_LIST) {\n          data.name_data.NAME_LEFT_LIST = joinListIfNeeded(data.name_data.NAME_LEFT_LIST);\n        }\n        // 修正 NAME_RIGHT_LIST\n        if (data.name_data.NAME_RIGHT_LIST) {\n          data.name_data.NAME_RIGHT_LIST = joinListIfNeeded(data.name_data.NAME_RIGHT_LIST);\n        }\n      }\n      return data;\n    };\n\n    // 5. 分发结果\n    if (Array.isArray(parsedData)) {\n      parsedData.forEach(data => {\n        results.push({\n          json: processData(data)\n        });\n      });\n    } else {\n      results.push({\n        json: processData(parsedData)\n      });\n    }\n\n  } catch (error) {\n    results.push({\n      json: {\n        error: \"JSON解析失败\",\n        message: error.message,\n        original_input: item.json\n      }\n    });\n  }\n}\n\n// 返回处理后的数据给下一个节点\nreturn results;\n"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        1568,
+        1344
+      ],
+      "id": "8d21f3bc-8ae3-4872-a2a3-0e7242f31143",
+      "name": "Code in JavaScript"
+    },
+    {
+      "parameters": {
+        "url": "=http://localhost:8080/pinterest/{{ $('Edit Fields').item.json.fileName }}.html",
+        "operation": "getScreenshot",
+        "fullPage": true,
+        "options": {
+          "launchArguments": {
+            "args": [
+              {
+                "arg": "--window-size=1000,1500"
+              },
+              {
+                "arg": "--no-sandbox"
+              },
+              {
+                "arg": "--disable-setuid-sandbox"
+              }
+            ]
+          },
+          "waitUntil": "networkidle0",
+          "stealth": true
+        }
+      },
+      "type": "n8n-nodes-puppeteer.puppeteer",
+      "typeVersion": 1,
+      "position": [
+        2912,
+        1344
+      ],
+      "id": "2d9b3fc0-a400-47cc-957f-bea3ac8a41e5",
+      "name": "Puppeteer截图封面"
+    },
+    {
+      "parameters": {
+        "html": "<!DOCTYPE html>\n<html lang=\"en\">\n<head>\n    <meta charset=\"UTF-8\">\n    <title>Production Pin - Local Fonts Optimized</title>\n    <style>\n        /* \n           无需联网，直接使用 Docker 容器内安装的本地字体\n           依赖包: fonts-noto-cjk, fonts-noto-color-emoji \n        */\n        \n        * { margin: 0; padding: 0; box-sizing: border-box; }\n\n        :root {\n            /* 定义字体栈 (Font Stack) */\n            \n            /* 主标题/衬线体：优先使用 Noto Serif CJK SC (涵盖中英文)，回退到系统 Serif */\n            --font-main: 'Noto Serif CJK SC', 'Source Han Serif SC', 'Serif', 'Noto Color Emoji';\n            \n            /* 副标题/无衬线体：优先使用 Noto Sans CJK SC，回退到系统 Sans-serif */\n            --font-sub: 'Noto Sans CJK SC', 'Source Han Sans SC', 'Sans-serif', 'Noto Color Emoji';\n            \n            /* 中文强调字体：同主字体 */\n            --font-chinese: 'Noto Serif CJK SC', 'Source Han Serif SC', 'Serif', 'Noto Color Emoji';\n\n            /* 特殊：书法/手写体 (节日风格用) */\n            /* 尝试加载常见的 Linux 楷体/魏碑，如果没有则回退到宋体，保证不乱码 */\n            --font-calligraphy: 'KaiTi', '楷体', 'AR PL UKai CN', 'AR PL UKai HK', 'Noto Serif CJK SC', 'Serif', 'Noto Color Emoji';\n            \n            /* 特殊：装饰体 (节日风格用) - 容器内无Cinzel，回退到粗宋体 */\n            --font-decorative: 'Noto Serif CJK SC', 'Serif', 'Noto Color Emoji';\n        }\n\n        body { \n            background-color: #121212; \n            display: flex; \n            justify-content: center; \n            align-items: center; \n            min-height: 100vh; \n            /* 全局兜底字体 */\n            font-family: var(--font-sub);\n        }\n\n        /* --- 风格切换 --- */\n        \n        /* 亮图风格 */\n        .style-text-light .overlay { background: rgba(255, 255, 255, 0.25); }\n        .style-text-light .header h1 { color: #1A1A1A; }\n        .style-text-light .header p { color: #333333; border: 3px solid #333333; }\n        .style-text-light .vertical-line { background: rgba(0, 0, 0, 0.15); }\n        .style-text-light .name-item { color: #222222; }\n        .style-text-light .name-item span { color: #B03A2E; } \n        .style-text-light .footer { color: #555555; }\n\n        /* 暗图风格 */\n        .style-text-dark .overlay { background: rgba(0, 0, 0, 0.5); }\n        .style-text-dark .header h1 { color: #FFFFFF; text-shadow: 0 4px 10px rgba(0,0,0,0.3); }\n        .style-text-dark .header p { color: #FFD700; border: 3px solid #FFD700; }\n        .style-text-dark .vertical-line { background: rgba(255, 255, 255, 0.3); }\n        .style-text-dark .name-item { color: #FFFFFF; text-shadow: 0 2px 4px rgba(0,0,0,0.5); }\n        .style-text-dark .name-item span { color: #FFD700; } \n        .style-text-dark .footer { color: #EEEEEE; }\n\n        /* 节日/金红风格 */\n        .style-text-festive .overlay { background: rgba(120, 0, 0, 0.25); }\n        \n        /* 修复：使用本地装饰字体变量 */\n        .style-text-festive .header h1 { \n            color: #FFD700; \n            font-family: var(--font-decorative); \n        }\n        .style-text-festive .header p { color: #FFFFFF; border: 3px solid #FFFFFF; }\n        .style-text-festive .vertical-line { background: rgba(255, 215, 0, 0.4); }\n        .style-text-festive .name-item { color: #FFFFFF; }\n        \n        /* 修复：使用本地书法字体变量 */\n        .style-text-festive .name-item span { \n            color: #FFD700; \n            font-family: var(--font-calligraphy); \n        }\n        .style-text-festive .footer { color: #FFD700; }\n\n        /* 基础布局控制 */\n        .pin-container {\n            width: 1000px; height: 1500px; position: relative;\n            background-image: url('{{ $('Get row(s)').item.json.file_path }}'); \n            background-position: center; \n            background-size: cover; \n            display: flex; flex-direction: column; align-items: center; justify-content: flex-start; overflow: hidden;\n        }\n\n        #interference-layer { position: absolute; top: 0; left: 0; width: 100%; height: 100%; z-index: 2; pointer-events: none; }\n        .random-shape { position: absolute; background: white; filter: blur(60px); opacity: 0.07; }\n        .overlay { position: absolute; top: 0; left: 0; width: 100%; height: 100%; z-index: 3; }\n\n        .content {\n            position: relative; z-index: 10; width: 1000px;\n            display: flex; flex-direction: column; align-items: center;\n            padding-top: 120px;\n            transition: none; \n        }\n\n        .header { text-align: center; margin-bottom: 70px; }\n        \n        /* 使用本地字体变量 */\n        .header h1 { \n            font-family: var(--font-main); \n            font-size: 80px; \n            line-height: 0.9; \n            letter-spacing: 10px; \n            text-transform: uppercase; \n            font-weight: 900; /* 加粗以弥补字形差异 */\n        }\n\n        .header p {\n            font-family: var(--font-sub); \n            font-size: 32px; font-weight: 600; margin-top: 25px;\n            padding: 8px 50px; border-radius: 60px; display: inline-block; letter-spacing: 3px; text-transform: uppercase;\n        }\n\n        .main-list { display: flex; width: 920px; justify-content: center; position: relative; }\n        .vertical-line { position: absolute; left: 50%; top: 0; bottom: 0; width: 2px; transform: translateX(-50%); }\n\n        .column { width: 460px; display: flex; flex-direction: column; gap: 30px; }\n        .left-col { padding-right: 75px; text-align: right; } \n        .right-col { padding-left: 75px; text-align: left; }\n\n        .name-item { font-family: var(--font-sub); font-size: 34px; font-weight: 600; }\n        \n        /* 使用本地字体变量 */\n        .name-item span { \n            font-family: var(--font-chinese); \n            font-size: 42px; \n            font-weight: 900; \n            margin-left: 12px; \n            vertical-align: middle; \n        }\n\n        .footer { \n            position: absolute; bottom: 50px; width: 100%; text-align: center; \n            font-family: var(--font-sub); \n            font-size: 28px; font-weight: 600; letter-spacing: 6px; z-index: 20; \n        }\n        \n        /* 扩展形状类 */\n        .circle { border-radius: 50%; }\n        .triangle { clip-path: polygon(50% 0%, 0% 100%, 100% 100%); }\n        .diamond { clip-path: polygon(50% 0%, 100% 50%, 50% 100%, 0% 50%); }\n        .star { clip-path: polygon(50% 0%, 61% 35%, 98% 35%, 68% 57%, 79% 91%, 50% 70%, 21% 91%, 32% 57%, 2% 35%, 39% 35%); }\n    </style>\n</head>\n\n<body>\n    <!-- 注意：这里的变量是 n8n 动态替换的，保持不动 -->\n    <div class=\"pin-container  {{ $('Get row(s)').item.json.font_style }} \" id=\"mainContainer\">\n        <div id=\"interference-layer\"></div>\n        <div class=\"overlay\"></div>\n\n        <div class=\"content\" id=\"contentArea\">\n            <header class=\"header\">\n                <h1> {{ $('Split Out').item.json.fields.Image_Big_Title[0].text }} </h1>\n                <p>   {{ $('Split Out').item.json.fields.Image_Sub_Title[0].text }}   </p>\n            </header>\n\n            <main class=\"main-list\">\n                <div class=\"vertical-line\"></div>\n                <div class=\"column left-col\">\n                    {{ $('Code in JavaScript').item.json.name_data.NAME_LEFT_LIST }}                  \n                </div>\n                <div class=\"column right-col\">\n                    {{ $('Code in JavaScript').item.json.name_data.NAME_RIGHT_LIST }}                 \n                </div>\n            </main>\n        </div>\n        \n        <footer class=\"footer\">ChineseName.us</footer>\n    </div>\n\n    <script>\n        // 1. 干扰噪点生成\n        function addAntiAiShapes() {\n            const layer = document.getElementById('interference-layer');\n            const shapeTypes = ['circle', 'triangle', 'diamond', 'star', 'blob'];\n            const count = 18; \n\n            for (let i = 0; i < count; i++) {\n                const shape = document.createElement('div');\n                const type = shapeTypes[Math.floor(Math.random() * shapeTypes.length)];\n                \n                shape.className = `random-shape ${type !== 'blob' ? type : ''}`;\n                const size = Math.floor(Math.random() * 280) + 120;\n                shape.style.width = size + 'px';\n                shape.style.height = size + 'px';\n                shape.style.left = Math.floor(Math.random() * 100) + '%';\n                shape.style.top = Math.floor(Math.random() * 100) + '%';\n                shape.style.transform = `rotate(${Math.floor(Math.random() * 360)}deg)`;\n                \n                if (type === 'blob') {\n                    const r = () => Math.floor(Math.random() * 60) + 40;\n                    shape.style.borderRadius = `${r()}% ${100-r()}% ${r()}% ${100-r()}% / ${100-r()}% ${r()}% ${100-r()}% ${r()}%`;\n                }\n                \n                layer.appendChild(shape);\n            }\n        }\n\n        // 2. 核心：应用随机位移和缩放\n        function applyRandomness() {\n            // A. 正文区域随机位移 (-3px 到 +3px)\n            const content = document.getElementById('contentArea');\n            const shiftX = (Math.random() * 6) - 3; \n            const shiftY = (Math.random() * 6) - 3;\n            content.style.transform = `translate(${shiftX}px, ${shiftY}px)`;\n\n            // B. 背景图微缩放 (100% 到 104%)\n            const container = document.getElementById('mainContainer');\n            const bgScale = 100 + (Math.random() * 4); \n            container.style.backgroundSize = `${bgScale}% auto`; \n        }\n\n        // 页面加载后立即执行\n        window.addEventListener('load', () => {\n            addAntiAiShapes();\n            applyRandomness();\n        });\n    </script>\n</body>\n</html>\n"
+      },
+      "type": "n8n-nodes-base.html",
+      "typeVersion": 1.2,
+      "position": [
+        2240,
+        1344
+      ],
+      "id": "e24ae07a-b243-488c-9fae-165d3edcfe5d",
+      "name": "封面数据注入HTML"
+    },
+    {
+      "parameters": {
+        "operation": "get",
+        "dataTableId": {
+          "__rl": true,
+          "value": "v7X8dSpDefb4rRa8",
+          "mode": "list",
+          "cachedResultName": "pinterest_chinese_name_background_png_font_map",
+          "cachedResultUrl": "/projects/1FalUCh1tiQptd4s/datatables/v7X8dSpDefb4rRa8"
+        },
+        "filters": {
+          "conditions": [
+            {
+              "keyName": "file_name",
+              "keyValue": "={{ $('Loop Over Items').item.json.fields.Background_Type.text }}"
+            }
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.dataTable",
+      "typeVersion": 1.1,
+      "position": [
+        2016,
+        1344
+      ],
+      "id": "087efab0-3752-4723-9a3c-718b2b75b073",
+      "name": "Get row(s)"
+    },
+    {
+      "parameters": {
+        "operation": "write",
+        "fileName": "=/root/.n8n-files/my_data/pinterest/{{ $('Edit Fields').item.json.fileName }}.html",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.readWriteFile",
+      "typeVersion": 1.1,
+      "position": [
+        2688,
+        1344
+      ],
+      "id": "e7f304ba-09fc-435a-80ba-da5bc9e47cf5",
+      "name": "Read/Write Files from Disk"
+    },
+    {
+      "parameters": {
+        "operation": "toText",
+        "sourceProperty": "html",
+        "binaryPropertyName": "=data",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.convertToFile",
+      "typeVersion": 1.1,
+      "position": [
+        2464,
+        1344
+      ],
+      "id": "cfc8063f-9dbd-4b7e-bda6-1d8c552c5f86",
+      "name": "Convert to File"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "b484c9d7-3125-4560-a99a-d28e7317d212",
+              "name": "fileName",
+              "value": "={{ $json.pin_title.toLowerCase().trim().replace(/[\\s/\\\\?%*:|\"<>]+/g, '-') }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        1792,
+        1344
+      ],
+      "id": "b3a1b186-57ea-4742-96a7-16312c58f7ee",
+      "name": "Edit Fields"
+    },
+    {
+      "parameters": {
+        "content": "# 获取多条原始的pin策略数据",
+        "height": 432,
+        "width": 496
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        -304,
+        976
+      ],
+      "typeVersion": 1,
+      "id": "92d4c64f-1216-46fc-a7ef-83bf5f3506da",
+      "name": "Sticky Note"
+    },
+    {
+      "parameters": {
+        "content": "# AI处理这些pin策略",
+        "height": 432,
+        "width": 592,
+        "color": 3
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        224,
+        976
+      ],
+      "typeVersion": 1,
+      "id": "43de509f-90c7-4104-b676-2680d0140ae6",
+      "name": "Sticky Note1"
+    },
+    {
+      "parameters": {
+        "content": "# 生成pin图、上传图片",
+        "height": 496,
+        "width": 2848,
+        "color": 7
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        1104,
+        1248
+      ],
+      "typeVersion": 1,
+      "id": "41f9e9bd-d9db-47fa-b786-cf26afa03bae",
+      "name": "Sticky Note2"
+    },
+    {
+      "parameters": {
+        "operation": "upload",
+        "bucketName": "365coloringpages",
+        "fileName": "=pinterest/{{ $now.format('yyyy-MM-dd-HH') }}/{{ $('Edit Fields').item.json.fileName }}.png",
+        "additionalFields": {
+          "acl": "publicRead"
+        }
+      },
+      "type": "n8n-nodes-base.s3",
+      "typeVersion": 1,
+      "position": [
+        3136,
+        1344
+      ],
+      "id": "d4737ada-e556-4dbb-98e2-f9c132b1c172",
+      "name": "Upload图片到cloudflare R",
+      "credentials": {
+        "s3": {
+          "id": "vsFXZachEKdYzK6F",
+          "name": "S3 account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "resource": "bitable",
+        "operation": "bitable:table:record:update",
+        "app_toke": "={{ $('Bitable:parseUrl bitable').item.json.app_token }}",
+        "table_id": "={{ $('Bitable:parseUrl bitable').item.json.table_id }}",
+        "record_id": "={{ $('Split Out').item.json.record_id }}",
+        "body": "={\"fields\":{\n  \"图片alt\":\"{{ $('Code in JavaScript').item.json.alt_text }}\",\n  \"pin_title\":\"{{ $('Code in JavaScript').item.json.pin_title }}\",\n  \"pin_description\":\"{{ $('Code in JavaScript').item.json.pin_description }}\",\n  \"pin_img_url\":\"{{ $json.pin_url }}\",\n  \"发布时间\":{{ $now.toMillis() }},\n  \"状态\":\"已发布\"\n}} "
+      },
+      "type": "n8n-nodes-feishu-lite.feishuNode",
+      "typeVersion": 1,
+      "position": [
+        3552,
+        1344
+      ],
+      "id": "55186422-7962-4666-b54d-04346064c1fe",
+      "name": "Bitable:table:record:update bitable",
+      "credentials": {
+        "feishuCredentialsApi": {
+          "id": "xuG0xGw9LUJ1LWpI",
+          "name": "Feishu Credentials account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "05713806-ab06-46c5-8599-f41f58d47121",
+              "name": "pin_url",
+              "value": "={{\n\n  'https://image.365coloringpages.com/pinterest/'\n  + $now.format('yyyy-MM-dd-HH')\n  + '/'\n  + $('Edit Fields').item.json.fileName\n  + '.png'\n\n}}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        3328,
+        1344
+      ],
+      "id": "ec7ae752-6e58-4b52-b0e4-170d63d706e8",
+      "name": "Edit Fields1"
+    },
+    {
+      "parameters": {
+        "content": "# pinterest自动生成帖子工作流\n\n## 作者：Hellos AI\n## 时间：2026-01-08 19:10:00\n## 版本：v1.0\n\n## 功能：\n### 把google sheet文档中的PIN一条一条的生成PIN，然后写入到csv文件中，接着更新google sheet中PIN的状态",
+        "height": 528,
+        "width": 864
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        1264,
+        16
+      ],
+      "typeVersion": 1,
+      "id": "f0dc6bce-fdc4-4bc7-9873-7a686f3af5eb",
+      "name": "Sticky Note5"
+    },
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.errorTrigger",
+      "typeVersion": 1,
+      "position": [
+        -448,
+        1712
+      ],
+      "id": "99f5a776-23da-49c8-8661-4f56fecf109e",
+      "name": "Error Trigger"
+    },
+    {
+      "parameters": {
+        "fromEmail": "tansunyj@sina.com",
+        "toEmail": "591124281@qq.com",
+        "subject": "告警：【{{ $now.format('yyyy-MM-dd-HH-mm-ss') }}】pinterest自动化工作流执行报错了！",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.emailSend",
+      "typeVersion": 2.1,
+      "position": [
+        -256,
+        1712
+      ],
+      "id": "8abf4689-a2db-4d21-8c49-90c64d66ddcd",
+      "name": "Send email",
+      "webhookId": "6b0e835c-20e0-4db9-9cac-fba4ece5e466",
+      "credentials": {
+        "smtp": {
+          "id": "Cha8dhCNqdZEjzoJ",
+          "name": "SMTP account(新浪邮箱)"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "options": {
+          "delimiter": ",",
+          "headerRow": true
+        }
+      },
+      "type": "n8n-nodes-base.convertToFile",
+      "typeVersion": 1.1,
+      "position": [
+        1632,
+        1056
+      ],
+      "id": "2bc3bed6-75be-4edf-bad4-eec1413d82c2",
+      "name": "Convert to File1"
+    },
+    {
+      "parameters": {
+        "jsCode": "// 当前循环这一条\nconst j = $input.first().json;\n\n// 其他节点的数据\nconst codeJs = $('Code in JavaScript').first().json;\n\n// 第几次循环（从 0 开始）\nconst idx = $runIndex; \n\n// 1. 修正获取时间数组的逻辑\n// 这里直接取生成的数组\nconst timeArray = $('Code in JavaScript4').first().json.generated_times || [];\n\n// 2. 根据索引获取对应的时间\n// 建议直接用 timeArray.length 来取模，更安全\nconst publishDateStr = timeArray.length > 0 ? timeArray[idx % timeArray.length] : '';\n\n// ===== 处理 Keywords：从 Description 中提取 #tag =====\nconst rawKeywords = codeJs.pin_description || '';\n\n// 从字符串中匹配所有 #标签\nconst tagMatches = rawKeywords.match(/#[^\\s#]+/g) || [];\n\n// 去掉前面的 #\nconst cleanTags = tagMatches.map(t => t.replace(/^#/, ''));\n\n// --- 鲁棒性修正：安全获取 Loop Over Items 里的 Keyword ---\nconst loopItem = $('Loop Over Items').first().json;\nlet extraKeyword = '';\n\n// 检查 fields, Keyword 数组是否存在且有元素\nif (loopItem.fields && Array.isArray(loopItem.fields.Keyword) && loopItem.fields.Keyword.length > 0) {\n    extraKeyword = loopItem.fields.Keyword[0].text || '';\n}\n\n// 用英文逗号拼接\nlet finalKeywords = cleanTags.join(', ');\nif (extraKeyword) {\n    finalKeywords = finalKeywords ? `${finalKeywords}, ${extraKeyword}` : extraKeyword;\n}\n\n// 组装 JSON\nconst combined = {\n  Title:             codeJs.pin_title,\n  'Media URL':       $('Edit Fields1').first().json.pin_url,\n  'Pinterest board':  loopItem.fields.Board || '',\n  Thumbnail:          '',\n  Description:        codeJs.pin_description,\n  Link:               (loopItem.fields.Target_URL && loopItem.fields.Target_URL.link) ? loopItem.fields.Target_URL.link : '',\n  'Publish date':    publishDateStr,\n  Keywords:          finalKeywords,\n};\n\nreturn [{ json: combined }];"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        3760,
+        1344
+      ],
+      "id": "12b1ed5f-8b8d-4299-820f-9e0a25e440b1",
+      "name": "Code in JavaScript1"
+    },
+    {
+      "parameters": {
+        "jsCode": "// 1. 获取输入数据中 items 的长度\n// 假设输入结构是 $input.first().json.data.items\n\nconst count = $input.first().json.count;\n\nif (count === 0) {\n    return [{ json: { times: [] } }];\n}\n\nconst times = [];\nconst now = new Date(); // 当前时间\n\n// 获取当天结束的时间 (23:59:59)\nconst endOfDay = new Date();\nendOfDay.setHours(23, 59, 59, 999);\n\n// 定义最小间隔（1小时 = 3600000 毫秒）\nconst minInterval = 60 * 60 * 1000;\n\n/**\n * 格式化函数：生成 2026-01-17T13:45:30 格式\n */\nfunction formatTime(date) {\n    const pad = (num) => String(num).padStart(2, '0');\n    const yyyy = date.getFullYear();\n    const mm = pad(date.getMonth() + 1);\n    const dd = pad(date.getDate());\n    const hh = pad(date.getHours());\n    const min = pad(date.getMinutes());\n    const ss = pad(date.getSeconds());\n    return `${yyyy}-${mm}-${dd}T${hh}:${min}:${ss}`;\n}\n\n/**\n * 核心逻辑：生成不等间距的时间戳\n */\nlet lastTimestamp = now.getTime();\n\nfor (let i = 0; i < count; i++) {\n    // 剩余可分配的时间总量\n    const remainingTime = endOfDay.getTime() - lastTimestamp;\n    \n    // 如果剩余时间不足以支撑后续的最小间隔，则强行分配最小间隔\n    // 否则在 [最小间隔, 剩余平均时间*1.5] 之间取随机值\n    const maxRandomBuffer = Math.max(minInterval, remainingTime / (count - i));\n    \n    const randomGap = Math.floor(Math.random() * (maxRandomBuffer - minInterval + 1)) + minInterval;\n    \n    let currentTimestamp = lastTimestamp + randomGap;\n    \n    // 确保不超过当天最后时间\n    if (currentTimestamp > endOfDay.getTime()) {\n        currentTimestamp = endOfDay.getTime() - (i * 1000); // 兜底处理\n    }\n    \n    const scheduledDate = new Date(currentTimestamp);\n    times.push(formatTime(scheduledDate));\n    \n    // 更新上一次的时间戳，用于下一次循环计算\n    lastTimestamp = currentTimestamp;\n}\n\n// 2. 返回 n8n 标准格式\n// 我们返回一个包含时间数组的对象\nreturn [{\n    json: {\n        total_items: count,\n        generated_times: times\n    }\n}];"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        0,
+        1136
+      ],
+      "id": "9d8d2615-a4c9-4dc6-a699-3d5e15600327",
+      "name": "Code in JavaScript4"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "aeb21095-4591-4dee-b878-268d113eb410",
+              "name": "count",
+              "value": 8,
+              "type": "number"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        -224,
+        1136
+      ],
+      "id": "5280114f-c839-45b9-9ea5-a827ed54da56",
+      "name": "Edit Fields2"
+    },
+    {
+      "parameters": {
+        "aggregate": "aggregateAllItemData",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.aggregate",
+      "typeVersion": 1,
+      "position": [
+        1184,
+        1056
+      ],
+      "id": "94396b70-824d-4541-9972-41d14ac4cba0",
+      "name": "Aggregate"
+    },
+    {
+      "parameters": {
+        "fieldToSplitOut": "data",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.splitOut",
+      "typeVersion": 1,
+      "position": [
+        1392,
+        1056
+      ],
+      "id": "d5093e54-1119-46e6-a9d1-8ebf1afee334",
+      "name": "Split Out2"
+    },
+    {
+      "parameters": {
+        "name": "={{ $now.format('yyyy-MM-dd-HH-mm-ss') }}-pinterest-chinesename.us.csv",
+        "driveId": {
+          "__rl": true,
+          "mode": "list",
+          "value": "My Drive"
+        },
+        "folderId": {
+          "__rl": true,
+          "value": "1xxYwPvG_XZ8JKNmV0jt0piDlnLOCVbHq",
+          "mode": "list",
+          "cachedResultName": "chinesename.us",
+          "cachedResultUrl": "https://drive.google.com/drive/folders/1xxYwPvG_XZ8JKNmV0jt0piDlnLOCVbHq"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleDrive",
+      "typeVersion": 3,
+      "position": [
+        1840,
+        1056
+      ],
+      "id": "01e5bea2-c754-4b6a-9c06-58403e9b3ae3",
+      "name": "Upload file",
+      "credentials": {
+        "googleDriveOAuth2Api": {
+          "id": "RXZosFclZEttFc7d",
+          "name": "Google Drive account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "content": "# 上传到google drive",
+        "height": 288,
+        "width": 1024
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        1104,
+        928
+      ],
+      "typeVersion": 1,
+      "id": "a47d2906-3fe4-4bed-a913-33bdc1ed3425",
+      "name": "Sticky Note4"
+    },
+    {
+      "parameters": {
+        "rule": {
+          "interval": [
+            {
+              "triggerAtHour": 8,
+              "triggerAtMinute": 10
+            }
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.3,
+      "position": [
+        -448,
+        1328
+      ],
+      "id": "6aa7e569-c7c4-4cd2-87f6-817839be3880",
+      "name": "Schedule Trigger"
+    },
+    {
+      "parameters": {
+        "content": "# 🚀 **HELLOS AI Research Lab** | Automation Deep Learning Center\n## **Project:** Pinterest Automation & Dynamic Visual Generation System `v1.0`\n### **Social Media Handle:** **Hellos AI**\n\n---\n\n# 📖 Workflow Overview\nDesigned by **Hellos AI**, this automation workflow solves the critical pain points of Pinterest marketing: \"Hard to batch create images,\" \"Time-consuming SEO writing,\" and \"Inaccurate cultural nuances.\" It reads strategy data from **Google Sheets**, leverages **DeepSeek** for SEO optimization and cultural content generation, and uses **Puppeteer** combined with HTML dynamic rendering to create unique visual assets. Finally, it automatically publishes to Pinterest and updates the data, achieving a fully unmanned operation loop.\n\n---\n\n# 🛠️ Core Module Breakdown\n\n## **1. Strategy Data Input (Data Input)**\n* **Function:** Periodically scans the **Google Sheets** task list (rows with status \"Initial\").\n* **Value:** Decouples operation strategy from execution. You only need to plan keywords and categories in the sheet; the automation takes over the rest.\n\n## **2. AI Deep Content Engine (The Brain)**\n* **Core Model:** **DeepSeek Chat (V3)**\n* **Role Setting:** \"Chief Content Strategist\" + \"Chinese Traditional Culture Expert.\"\n* **Data Structure:**\n    * **Smart Naming:** Generates 20 culturally accurate Chinese names (Pinyin + Hanzi) based on Five Elements/Vibe, outputting raw HTML.\n    * **SEO Optimization:** Generates high CTR Pin Titles, long-tail descriptions, and precise Hashtags.\n    * **JSON Parsing:** Enforces strict JSON output to ensure data consistency for downstream visual rendering.\n\n## **3. Dynamic Visual Factory (Visual Generation)**\n* **Core Tech:** **HTML5 + CSS3 (Local Fonts) + Puppeteer**\n* **Anti-Scraping Mechanism:**\n    * **Interference Script:** Built-in JavaScript adds random \"noise\" graphics (random shapes, positions) during rendering.\n    * **Pixel Shift:** Applies micro-pixel shifts and background scaling to ensure every generated image has a **unique file hash**, significantly reducing the risk of being flagged as duplicate content by Pinterest.\n* **Process:** Inject Data into HTML Template -> Puppeteer Screenshot (4K PNG) -> Auto Upload to Cloudflare R2 (S3 Compatible).\n\n## **4. Auto-Publishing & Data Loop (Publishing & Integration)**\n* **Smart Matching:** Fetches all Boards under the Pinterest account and matches the `Board ID` precisely based on the `Board Name` in the sheet.\n* **API Publishing:** Calls Pinterest API v5 to publish the Pin with the image URL, SEO title, and description.\n* **Status Write-back:** Upon success, syncs the Pin URL, publish time, and status (updates to \"Published\") back to **Google Sheets**.\n\n---\n\n# 🏗️ Setup Guide\n\n1.  **Google Sheets Prep:** Create a sheet with these core columns:\n    * `ID` (Unique Identifier), `Status` (Initial/Published), `Category` (Gender/Class), `Board` (Board Name), `Keyword`, `Target_URL` (Landing Page), `Background_Type` (Background filename).\n2.  **Environment Check:**\n    * Ensure `Puppeteer` dependencies are installed in your n8n Docker container.\n    * **Font Support:** The container must have Chinese font packages installed (e.g., `fonts-noto-cjk`) to ensure the generated images render text correctly without \"tofu\" boxes.\n3.  **Node Configuration:**\n    * **Google Sheets Node:** Replace with your specific Sheet ID and Name.\n    * **S3 (Cloudflare R2):** Configure your Bucket and Access Key for image storage.\n    * **DeepSeek & Pinterest:** Enter your respective API Keys.\n\n---\n\n# 🎯 Core Value\n> **\"Batch processing doesn't mean an assembly line; AI can do Haute Couture.\"**\n> Through **Hellos AI Research Lab's** solution, you not only achieve automated Pinterest posting but also ensure account safety and content uniqueness via code-level \"random interference\" technology, making every Pin aesthetically pleasing and SEO-ready.\n\n---\n\n# 🔗 Connect with Hellos AI\n* **Blog**: [https://hellosai.cc/](https://hellosai.cc/)\n* **YouTube**: [@hellos-ai](https://www.youtube.com/@hellos-ai)\n* **GitHub**: [https://github.com/tansunyj/my-n8n-sharing.git](https://github.com/tansunyj/my-n8n-sharing.git)\n\n_🚀 Powered by **Hellos AI** Automation Flows_",
+        "height": 1968,
+        "width": 1200
+      },
+      "id": "af573e4c-8745-431a-853d-14740cd4ced1",
+      "name": "Sticky Note6",
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        -1792,
+        -48
+      ],
+      "typeVersion": 1
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "When clicking ‘Execute workflow’": {
+      "main": [
+        [
+          {
+            "node": "Edit Fields2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Bitable:parseUrl bitable": {
+      "main": [
+        [
+          {
+            "node": "Bitable:table:record:search bitable",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Bitable:table:record:search bitable": {
+      "main": [
+        [
+          {
+            "node": "Split Out",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Split Out": {
+      "main": [
+        [
+          {
+            "node": "Loop Over Items",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Loop Over Items": {
+      "main": [
+        [
+          {
+            "node": "Aggregate",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "AI Agent",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "AI Agent": {
+      "main": [
+        [
+          {
+            "node": "Code in JavaScript",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "DeepSeek Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Simple Memory": {
+      "ai_memory": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_memory",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Code in JavaScript": {
+      "main": [
+        [
+          {
+            "node": "Edit Fields",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Puppeteer截图封面": {
+      "main": [
+        [
+          {
+            "node": "Upload图片到cloudflare R",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "封面数据注入HTML": {
+      "main": [
+        [
+          {
+            "node": "Convert to File",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get row(s)": {
+      "main": [
+        [
+          {
+            "node": "封面数据注入HTML",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Read/Write Files from Disk": {
+      "main": [
+        [
+          {
+            "node": "Puppeteer截图封面",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Convert to File": {
+      "main": [
+        [
+          {
+            "node": "Read/Write Files from Disk",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Edit Fields": {
+      "main": [
+        [
+          {
+            "node": "Get row(s)",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Upload图片到cloudflare R": {
+      "main": [
+        [
+          {
+            "node": "Edit Fields1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Edit Fields1": {
+      "main": [
+        [
+          {
+            "node": "Bitable:table:record:update bitable",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Error Trigger": {
+      "main": [
+        [
+          {
+            "node": "Send email",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Bitable:table:record:update bitable": {
+      "main": [
+        [
+          {
+            "node": "Code in JavaScript1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Convert to File1": {
+      "main": [
+        [
+          {
+            "node": "Upload file",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Code in JavaScript1": {
+      "main": [
+        [
+          {
+            "node": "Loop Over Items",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Code in JavaScript4": {
+      "main": [
+        [
+          {
+            "node": "Bitable:parseUrl bitable",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Edit Fields2": {
+      "main": [
+        [
+          {
+            "node": "Code in JavaScript4",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Aggregate": {
+      "main": [
+        [
+          {
+            "node": "Split Out2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Split Out2": {
+      "main": [
+        [
+          {
+            "node": "Convert to File1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Upload file": {
+      "main": [
+        []
+      ]
+    },
+    "Schedule Trigger": {
+      "main": [
+        [
+          {
+            "node": "Edit Fields2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": true,
+  "settings": {
+    "executionOrder": "v1",
+    "availableInMCP": false
+  },
+  "versionId": "28d39f16-8cbc-425c-8e5b-9361c9ecdd59",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "b41b82f90e5911478143dd45759994ffb5a9a8f78fdcb0a49bfa1738ab76ea51"
+  },
+  "id": "frCrgznvNQb6k92i",
+  "tags": [
+    {
+      "updatedAt": "2026-01-08T12:28:04.713Z",
+      "createdAt": "2026-01-08T12:28:04.713Z",
+      "id": "O4VbqAdyUFCpv9ly",
+      "name": "chinesename"
+    },
+    {
+      "updatedAt": "2026-01-08T12:27:46.782Z",
+      "createdAt": "2026-01-08T12:27:46.782Z",
+      "id": "QezK3zFUnyuj4jQT",
+      "name": "pinterest"
+    },
+    {
+      "updatedAt": "2026-01-08T12:27:55.817Z",
+      "createdAt": "2026-01-08T12:27:55.817Z",
+      "id": "UV06fGJaYawPcoHC",
+      "name": "deepseek"
+    }
+  ]
+}
